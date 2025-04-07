@@ -8,30 +8,37 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Label } from "@/components/ui/label";
+import { ArtifactCard } from "@/components/ArtifactCard";
+import { database } from "@/db/database";
+import { artifacts } from "@/db/schema";
+export async function Recommendations() {
+  const artifactList = await database.select().from(artifacts);
 
-export function Recommendations() {
   return (
-    <Carousel
-      opts={{
-        align: "start",
-      }}
-      className="w-full"
-    >
-      <CarouselContent>
-        {Array.from({ length: 10 }).map((_, index) => (
-          <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/5">
-            <div className="p-1">
-              <Card>
-                <CardContent className="flex aspect-square items-center justify-center p-6">
-                  <span className="text-3xl font-semibold">{index + 1}</span>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
+    <div>
+      <Label className="text-2xl font-bold">Recommendations</Label>
+      <Carousel
+        opts={{
+          align: "start",
+        }}
+        className="w-full"
+      >
+        <CarouselContent>
+          {artifactList.map((artifact) => (
+            <CarouselItem
+              key={artifact.id}
+              className="basis-1/3 md:basis-1/4 lg:basis-1/5"
+            >
+              <div className="p-1">
+                <ArtifactCard artifact={artifact} />
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    </div>
   );
 }

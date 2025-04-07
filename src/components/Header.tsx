@@ -9,9 +9,7 @@ export default function Header({ session }: { session: any }) {
   const links = [
     { href: "/", label: "Home" },
     { href: "/upload", label: "Upload" },
-    { href: "/services", label: "Services" },
-    { href: "/portfolio", label: "Portfolio" },
-    { href: "/contact", label: "Contact" },
+    { href: "/account", label: "Account" },
   ];
   const router = useRouter();
   const handleSignOut = async () => {

@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { submitArtifact } from "@/server/submitArtifact";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
   Form,
@@ -17,40 +16,45 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export default function FormClient() {
   const FormSchema = z.object({
-    username: z.string().min(2, {
-      message: "Username must be at least 2 characters.",
+    title: z.string().min(2, {
+      message: "Title must be at least 2 characters.",
     }),
+    description: z.string().min(2, {
+      message: "Description must be at least 2 characters.",
+    }),
+    file: z.instanceof(File),
   });
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      username: "",
+      title: "",
+      description: "",
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-    toast("Event has been created", {
-      description: "Sunday, December 03, 2023 at 9:00 AM",
-    });
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    const formData = new FormData();
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+    formData.append("file", data.file);
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        toast("Artifact submitted successfully");
+      } else {
+        toast("Failed to submit artifact");
+      }
+    } catch (error) {
+      toast("Failed to submit artifact");
+    }
   }
   return (
     <div className="container mx-auto">
@@ -61,12 +65,12 @@ export default function FormClient() {
         >
           <FormField
             control={form.control}
-            name="username"
+            name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input placeholder="Title" {...field} />
                 </FormControl>
                 <FormDescription>
                   This is your public display name.
@@ -75,10 +79,41 @@ export default function FormClient() {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Input placeholder="Description" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="file"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>File</FormLabel>
+                <FormControl>
+                  <Input 
+                    type="file" 
+                    onChange={(e) => field.onChange(e.target.files?.[0])}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <Button type="submit">Submit</Button>
         </form>
       </Form>
-      <form action={submitArtifact}>
+      {/* <form action={submitArtifact}>
         <Card className="w-[350px]">
           <CardHeader>
             <CardTitle>Create project</CardTitle>
@@ -122,7 +157,7 @@ export default function FormClient() {
             <Button>Deploy</Button>
           </CardFooter>
         </Card>
-      </form>
+      </form> */}
     </div>
   );
 }

@@ -57,7 +57,7 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at"),
 });
 
-export const arifacts = pgTable("arifacts", {
+export const artifacts = pgTable("artifacts", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
   description: text("description"),
@@ -79,7 +79,7 @@ export const arifacts = pgTable("arifacts", {
 //     id: serial("id").primaryKey(),
 //     content: text("content").notNull(),
 //     userId: integer("user_id").references(() => users.id),
-//     arifactId: integer("arifact_id").references(() => arifacts.id),
+//     arifactId: integer("arifact_id").references(() => artifacts.id),
 //     createdAt: timestamp("created_at").notNull().defaultNow(),
 //     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 // });

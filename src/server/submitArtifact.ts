@@ -3,7 +3,7 @@
 import path from "path";
 
 import { database } from "@/db/database";
-import { arifacts } from "@/db/schema";
+import { artifacts } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 
 export async function submitArtifact(formData: FormData) {
@@ -19,7 +19,7 @@ export async function submitArtifact(formData: FormData) {
   const description = formData.get("description");
   const url = formData.get("url");
 
-  await database.insert(arifacts).values({
+  await database.insert(artifacts).values({
     title: title as string,
     description: description as string,
     url: url as string,
